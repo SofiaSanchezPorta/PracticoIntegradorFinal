@@ -19,6 +19,7 @@ def get_image_path(instance, filename): #PARA QUE NOS DEVUELVA LA UBICACIÓN EXA
 class Producto(models.Model):
     """Model definition for Producto."""
 
+    sku = models.CharField("SKU", max_length=50, unique=True, null=True, blank=True)
     nombre = models.CharField("Nombre", max_length=50)
     descripcion = models.CharField("Descripción", max_length=200)
     precio = models.DecimalField("Precio", max_digits=10, decimal_places=2)

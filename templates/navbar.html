@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'productos:producto_list' %}">
+                <i class="fas fa-boxes"></i> Sistema de Inventario
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'productos:producto_list' %}">
+                            <i class="fas fa-list"></i> Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'productos:producto_create' %}">
+                            <i class="fas fa-plus-circle"></i> Nuevo Producto
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'productos:stock_bajo_list' %}">
+                            <i class="fas fa-exclamation-triangle"></i> Stock Bajo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'ventas:venta_list' %}">
+                            <i class="fas fa-shopping-cart"></i> Ventas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'clientes:cliente_list' %}">
+                            <i class="fas fa-user"></i> Clientes
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>

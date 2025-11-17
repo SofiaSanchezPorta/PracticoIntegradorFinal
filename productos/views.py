@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, FormView
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -16,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 class ProductoListView(ListView):
     model = Producto
     template_name = "productos/producto_list.html"
-    context_object_name = "producto"
+    context_object_name = "productos"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -24,7 +22,7 @@ class ProductoListView(ListView):
         stock_bajo = self.request.GET.get('stock_bajo')
         if stock_bajo:
             queryset = queryset.filter(stock__lt=F("stock_minimo")) #EL FILTRO TOMA EL VALOR DE CAMPO STOCK_MINIMO Y DEVUELE LOS QUE ESTÁN POR DEBAJO
-        return queryset.order_by["nombre"]
+        return queryset.order_by("nombre")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -50,9 +48,9 @@ class ProductoCreateView(CreateView):
     success_url = reverse_lazy("productos:producto_list")
 
     def form_valid(self, form): #SE IMPLEMENTA CUANDO TENEMOS UNA VISTA ASOCIADA A UN FORMULARIO 
-        respone = super().form_valid(form)
+        response = super().form_valid(form)
 
-        if form.cleaned_data > 0:
+        if form.cleaned_data["stock"] > 0:
             MovimientoStock.objects.create(
                 producto= self.object,
                 tipo="entrada",
@@ -63,14 +61,14 @@ class ProductoCreateView(CreateView):
             )
 
         messages.success(self.request, "Producto creado exitosamente")
-        return respone
+        return response
     
 
 class ProductoUpdateView(UpdateView):
     model = Producto
     template_name = "productos/producto_form.html"
     form_class = ProductoForm
-    success_url = reverse_lazy("producto:producto_list")
+    success_url = reverse_lazy("productos:producto_list")
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -80,8 +78,8 @@ class ProductoUpdateView(UpdateView):
 
 class ProductoDeleteView(DeleteView):
     model = Producto
-    template_name = "productos/producto_confirm_delete.html"
-    success_url = reverse_lazy("producto:producto_list")
+    template_name = "productos/producto_delete.html"
+    success_url = reverse_lazy("productos:producto_list")
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Producto eliminado exitosamente")
@@ -101,6 +99,7 @@ class MovimientoStockCreateView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["producto"] = get_object_or_404(Producto, pk=self.kwargs["pk"])
+        return context
 
     def form_valid(self, form):
         movimiento = form.save(commit=False)

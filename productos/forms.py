@@ -4,12 +4,12 @@ from .models import Producto, MovimientoStock
 from crispy_forms.layout import Layout, Row, Column, Submit, Reset, ButtonHolder, Field, Div, HTML
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from crispy_forms.helper import FormHelper
-from .crispy import BaseFormHelper
+from core.crispy import BaseFormHelper
 
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ["nombre", "descripcion", "precio", "stock", "stcok_minimo", "imagen"]
+        fields = ["sku", "nombre", "descripcion", "precio", "stock", "stock_minimo", "imagen"]
         widgets = {
             "descripcion": forms.Textarea(attrs={"rows": 3}),
         }
@@ -70,41 +70,40 @@ class MovimientoStockForm(forms.ModelForm):
             "motivo": "Motivo (opcional)",
         }
 
-        def __init__(self, *args, **kwargs):
-            self.producto = kwargs.pop("producto", None)
-            super().__init__(*args, **kwargs)
-            self.helper = BaseFormHelper()
-
-            stock_info = " "
-            if self.producto:
-                stock_info = f"""
-                <div class="alert alert-info">
-                    <strong>Producto:</strong> {self.producto.nombre}<br>
-                    <strong>Stock atual:</strong> {self.producto.stock}<br>
-                </div>
-                """
-
-            self.helper.layout = Layout(
-                HTML(stock_info),
-                Field("tipo"),
-                Field("cantidad"),
-                Field("motivo"),
-                ButtonHolder(
-                    Submit("submit", "Registrar movimiento", css_class="btn btn-success"),
-                    HTML('<a href="{{ request.META.HTTP_REFERER}}" class="btn btn-secondary"> Cancelar </a>')
-                )
-            )
+    def __init__(self, *args, **kwargs):
+        self.producto = kwargs.pop("producto", None)
+        super().__init__(*args, **kwargs)
+        self.helper = BaseFormHelper()
         
-        def clean_cantidad(self):
-            cantidad = self.cleaned_data.get("cantidad")
-            if cantidad <= 0:
-                raise ValidationError("La cantidad debe ser mayor a cero")
-            if self.producto and self.cleaned_data.get("tipo") == "salida":
-                if cantidad > self.producto.stock:
-                    raise ValidationError(
-                        f"No hay suficiente stock diponible: {self.producto.stock}"
-                        )
-            return cantidad
+        stock_info = " "
+        if self.producto:
+            stock_info = f"""
+            <div class="alert alert-info">
+                <strong>Producto:</strong> {self.producto.nombre}<br>
+                <strong>Stock atual:</strong> {self.producto.stock}<br>
+            </div>
+            """
+        self.helper.layout = Layout(
+            HTML(stock_info),
+            Field("tipo"),
+            Field("cantidad"),
+            Field("motivo"),
+            ButtonHolder(
+                Submit("submit", "Registrar movimiento", css_class="btn btn-success"),
+                HTML('<a href="{{ request.META.HTTP_REFERER}}" class="btn btn-secondary"> Cancelar </a>')
+            )
+        )
+    
+    def clean_cantidad(self):
+        cantidad = self.cleaned_data.get("cantidad")
+        if cantidad <= 0:
+            raise ValidationError("La cantidad debe ser mayor a cero")
+        if self.producto and self.cleaned_data.get("tipo") == "salida":
+            if cantidad > self.producto.stock:
+                raise ValidationError(
+                    f"No hay suficiente stock diponible: {self.producto.stock}"
+                    )
+        return cantidad
         
 
 #-------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Nueva Venta{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4"><i class="fas fa-plus-circle"></i> Crear nueva venta</h1>
+    
+    <form method="post" id="pedidoForm" novalidate>
+        {% csrf_token %}
+
+        {# DEBUG: mostrar errores de form y formset #}
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Errores en la venta:</strong> {{ form.errors }}
+            </div>
+        {% endif %}
+
+        {% if formset.non_form_errors %}
+            <div class="alert alert-danger">
+                <strong>Errores generales de items:</strong> {{ formset.non_form_errors }}
+            </div>
+        {% endif %}
+
+        {% if formset.errors %}
+            <div class="alert alert-danger">
+                <strong>Errores en los items:</strong>
+                {{ formset.errors }}
+            </div>
+        {% endif %}
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-user"></i> Datos del Cliente</h5>
+            </div>
+            <div class="card-body">
+                {% crispy form %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger mt-2">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-list"></i> Productos</h5>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                
+                {% if formset.non_form_errors %}
+                    <div class="alert alert-danger">
+                        <strong>Errores generales:</strong> {{ formset.non_form_errors }}
+                    </div>
+                {% endif %}
+                
+                <table class="table table-bordered" id="items-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Producto *</th>
+                            <th style="width: 120px">Cantidad *</th>
+                            <th style="width: 150px">Precio Unit.</th>
+                            <th style="width: 150px">Subtotal</th>
+                            <th style="width: 80px">Eliminar</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="items-tbody">
+                        {% for item_form in formset %}
+                        <tr class="item-row">
+                            <td>
+                                {{ item_form.producto }}
+                                {% if item_form.producto.errors %}
+                                    <div class="text-danger small">{{ item_form.producto.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item_form.cantidad }}
+                                {% if item_form.cantidad.errors %}
+                                    <div class="text-danger small">{{ item_form.cantidad.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item_form.precio_unitario }}
+                                {% if item_form.precio_unitario.errors %}
+                                    <div class="text-danger small">{{ item_form.precio_unitario.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item_form.subtotal }}
+                                {% if item_form.subtotal.errors %}
+                                    <div class="text-danger small">{{ item_form.subtotal.errors }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item_form.DELETE %}
+                                    {{ item_form.DELETE }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                    <tbody id="empty-form-row" class="d-none">
+                        <tr class="item-row">
+                            <td>
+                                {{ formset.empty_form.producto }}
+                            </td>
+                            <td>
+                                {{ formset.empty_form.cantidad }}
+                            </td>
+                            <td>
+                                {{ formset.empty_form.precio_unitario }}
+                            </td>
+                            <td>
+                                {{ formset.empty_form.subtotal }}
+                            </td>
+                            <td class="text-center">
+                                {% if formset.empty_form.DELETE %}
+                                    {{ formset.empty_form.DELETE }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-3 text-right">
+                    <strong>Total de la venta: $ <span id="venta-total">0.00</span></strong>
+                </div>
+                <button type="button" class="btn btn-sm btn-info" onclick="addItem()">
+                    <i class="fas fa-plus"></i> Agregar producto
+                </button>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-save"></i> Guardar venta
+            </button>
+            <a href="{% url 'ventas:venta_list' %}" class="btn btn-secondary btn-lg">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Diccionario id_producto → precio que viene de Django
+    const PRODUCT_PRICES = JSON.parse('{{ productos_precios|default:"{}"|escapejs }}');
+
+    // Calcula el total sumando todos los subtotales visibles
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll('#items-tbody input[name$="-subtotal"]').forEach(input => {
+            const val = parseFloat(input.value);
+            if (!isNaN(val)) {
+                total += val;
+            }
+        });
+        const totalSpan = document.getElementById('venta-total');
+        if (totalSpan) {
+            totalSpan.textContent = total.toFixed(2);
+        }
+    }
+
+    // Vincula eventos a una fila de items (tanto las iniciales como las nuevas)
+    function attachEventsToRow(row) {
+        const productoSelect = row.querySelector('select[name$="-producto"]');
+        const cantidadInput  = row.querySelector('input[name$="-cantidad"]');
+        const precioInput    = row.querySelector('input[name$="-precio_unitario"]');
+        const subtotalInput  = row.querySelector('input[name$="-subtotal"]');
+
+        if (!productoSelect || !cantidadInput || !precioInput || !subtotalInput) {
+            return;
+        }
+
+        function updateRow() {
+            const prodId = productoSelect.value;
+            const qty    = parseFloat(cantidadInput.value) || 0;
+
+            const hasPrice = prodId && Object.prototype.hasOwnProperty.call(PRODUCT_PRICES, prodId);
+            const price    = hasPrice ? PRODUCT_PRICES[prodId] : null;
+
+            // Mostrar precio y subtotal en la fila
+            precioInput.value   = hasPrice ? price.toFixed(2) : "";
+            subtotalInput.value = hasPrice && qty ? (price * qty).toFixed(2) : "";
+
+            // Actualizar total general
+            updateTotal();
+        }
+
+        // Cuando cambie el producto o la cantidad, recalculamos
+        productoSelect.addEventListener("change", updateRow);
+        cantidadInput.addEventListener("input", updateRow);
+    }
+
+    // Al cargar la página, conectar las filas que ya vienen del formset
+    document.querySelectorAll('#items-tbody tr.item-row').forEach(attachEventsToRow);
+    // Calcular total inicial (será 0.00)
+    updateTotal();
+
+    // Función para agregar una nueva fila de item
+    function addItem() {
+        const totalFormsInput = document.querySelector('[name="{{ formset.prefix }}-TOTAL_FORMS"]');
+        let formIndex = parseInt(totalFormsInput.value);
+
+        const emptyTemplate = document.querySelector('#empty-form-row').innerHTML;
+        const newRowHtml    = emptyTemplate.replace(/__prefix__/g, formIndex);
+
+        const tbody = document.querySelector('#items-tbody');
+        tbody.insertAdjacentHTML('beforeend', newRowHtml);
+
+        totalFormsInput.value = formIndex + 1;
+
+        const newRow = tbody.querySelector('tr.item-row:last-child');
+        attachEventsToRow(newRow);
+        updateTotal();
+    }
+</script>
+
+
+{% endblock %}

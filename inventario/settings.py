@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'productos',
+    'clientes',
+    'core',
+    'ventas',
+
 ]
 
 MIDDLEWARE = [
@@ -128,8 +132,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstra4'
-CRISPY_TEMPLATE_PACK = 'bootstra4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 BOOTSTRAP4 = {
     'include_jquery' : True,

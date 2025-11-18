@@ -24,7 +24,7 @@ class Venta(models.Model):
         """Unicode representation of Venta."""
         return f"Pedido #{self.codigo_venta} a nombre de {self.cliente.apellido}, {self.cliente.nombre} - Total: ${self.total} - fecha: {self.fecha.date()}"
     
-    def calcula_total(self):
+    def calcular_total(self):
         self.total = sum(item.subtotal for item in self.items.all())
         self.save(update_fields=['total'])
     
@@ -49,8 +49,8 @@ class ItemVenta(models.Model):
         return f"{self.producto.nombre} * {self.cantidad} - Subtotal = {self.subtotal} - (Nro de venta: {self.venta.codigo_venta})"
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         self.subtotal = self.cantidad * self.precio_unitario
+        super().save(*args, **kwargs)
         self.venta.calcular_total()  # Actualiza el total del pedido
 
     def clean(self):

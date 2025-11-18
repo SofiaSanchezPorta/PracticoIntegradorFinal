@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2><i class="fas fa-file-invoice-dollar"></i> Detalle de la venta</h2>
+
+    <p>
+        <strong>Código de venta:</strong>
+        {{ object.codigo_venta|default:"(sin código)" }}
+    </p>
+    <p>
+        <strong>Cliente:</strong>
+        {{ object.cliente.apellido }}, {{ object.cliente.nombre }}
+    </p>
+    <p>
+        <strong>Fecha:</strong>
+        {{ object.fecha|date:"d/m/Y H:i" }}
+    </p>
+    <p>
+        <strong>Total:</strong>
+        $ {{ object.total|floatformat:2 }}
+    </p>
+
+    <hr>
+
+    <h4>Ítems de la venta</h4>
+
+    {% if object.items.all %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="text-right">Cantidad</th>
+                    <th class="text-right">Precio unitario</th>
+                    <th class="text-right">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object.items.all %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td class="text-right">{{ item.cantidad }}</td>
+                    <td class="text-right">$ {{ item.precio_unitario|floatformat:2 }}</td>
+                    <td class="text-right">$ {{ item.subtotal|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            Esta venta no tiene ítems registrados.
+        </div>
+    {% endif %}
+
+    <p class="mt-3">
+        <a href="{% url 'ventas:venta_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a la lista de ventas
+        </a>
+    </p>
+</div>
+{% endblock %}

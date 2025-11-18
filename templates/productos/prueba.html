@@ -27,3 +27,120 @@
 
 </div>
 {% endblock %}
+
+<script>
+  // 1) Diccionario id_producto → precio unitario que viene desde Django
+  const PRODUCT_PRICES = {{ productos_precios|default:"{}"|safe }};
+
+
+  // Recalcula el total general sumando todos los subtotales de las filas
+  function updateTotal() {
+      let total = 0;
+
+      document.querySelectorAll('#items-tbody input[name$="-subtotal"]').forEach(input => {
+          const val = parseFloat(input.value);
+          if (!isNaN(val)) {
+              total += val;
+          }
+      });
+
+      const totalSpan = document.getElementById('venta-total');
+      if (totalSpan) {
+          totalSpan.textContent = total.toFixed(2);
+      }
+  }
+
+  // Recalcula precio unitario y subtotal de UNA fila
+  function updateRow(row) {
+      const productoSelect = row.querySelector('select[name$="-producto"]');
+      const cantidadInput  = row.querySelector('input[name$="-cantidad"]');
+      const precioInput    = row.querySelector('input[name$="-precio_unitario"]');
+      const subtotalInput  = row.querySelector('input[name$="-subtotal"]');
+
+      if (!productoSelect || !cantidadInput || !precioInput || !subtotalInput) {
+          return;
+      }
+
+      const prodId = productoSelect.value;
+      const qty    = parseFloat(cantidadInput.value) || 0;
+
+      // Buscamos el precio en el diccionario enviado por Django
+      const price = (prodId && Object.prototype.hasOwnProperty.call(PRODUCT_PRICES, prodId))
+          ? PRODUCT_PRICES[prodId]
+          : null;
+
+      if (price !== null && qty > 0) {
+          precioInput.value   = Number(price).toFixed(2);
+          subtotalInput.value = Number(price * qty).toFixed(2);
+      } else if (price !== null && qty === 0) {
+          // Solo producto seleccionado, sin cantidad
+          precioInput.value   = Number(price).toFixed(2);
+          subtotalInput.value = "";
+      } else {
+          // Sin producto o sin precio
+          precioInput.value   = "";
+          subtotalInput.value = "";
+      }
+  }
+
+  // Conecta los eventos de una fila (producto y cantidad)
+  function attachEventsToRow(row) {
+      const productoSelect = row.querySelector('select[name$="-producto"]');
+      const cantidadInput  = row.querySelector('input[name$="-cantidad"]');
+
+      if (!productoSelect || !cantidadInput) {
+          return;
+      }
+
+      const handler = () => {
+          updateRow(row);
+          updateTotal();
+      };
+
+      productoSelect.addEventListener("change", handler);
+      cantidadInput.addEventListener("input", handler);
+  }
+
+  // Inicializa eventos en las filas que ya vienen en el formset
+  function initExistingRows() {
+      const rows = document.querySelectorAll('#items-tbody tr.item-row');
+      rows.forEach(row => {
+          attachEventsToRow(row);
+          // Si hay datos iniciales, recalculamos
+          updateRow(row);
+      });
+      updateTotal();
+  }
+
+  // Agrega una nueva fila usando el empty_form del formset
+  function addItem() {
+      // Campo TOTAL_FORMS del management_form
+      const totalFormsInput = document.querySelector('input[name="{{ formset.prefix }}-TOTAL_FORMS"]');
+      let formIndex = parseInt(totalFormsInput.value);
+
+      // HTML de la fila vacía
+      const emptyTemplate = document.querySelector('#empty-form-row').innerHTML;
+
+      // Reemplazamos __prefix__ por el índice real
+      const newRowHtml = emptyTemplate.replace(/__prefix__/g, formIndex);
+
+      // Insertamos al final del tbody
+      const tbody = document.querySelector('#items-tbody');
+      tbody.insertAdjacentHTML('beforeend', newRowHtml);
+
+      // Actualizamos TOTAL_FORMS
+      totalFormsInput.value = formIndex + 1;
+
+      // Tomamos la última fila recién agregada y le enchufamos los eventos
+      const newRow = tbody.querySelector('tr.item-row:last-child');
+      attachEventsToRow(newRow);
+
+      // Recalcular total por las dudas
+      updateTotal();
+  }
+
+  // Cuando cargue el DOM, inicializamos filas existentes
+  document.addEventListener('DOMContentLoaded', function () {
+      initExistingRows();
+  });
+</script>

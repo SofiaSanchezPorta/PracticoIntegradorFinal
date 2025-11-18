@@ -7,29 +7,31 @@
 <div class="container">
     <h1 class="mb-4"><i class="fas fa-plus-circle"></i> Crear nueva venta</h1>
     
-    <form method="post" id="pedidoForm" novalidate>
+    <form method="post" id="ventaForm" novalidate>
         {% csrf_token %}
 
-        {# DEBUG: mostrar errores de form y formset #}
+        {# Errores del formulario principal #}
         {% if form.errors %}
             <div class="alert alert-danger">
                 <strong>Errores en la venta:</strong> {{ form.errors }}
             </div>
         {% endif %}
 
+        {# Errores generales del formset #}
         {% if formset.non_form_errors %}
             <div class="alert alert-danger">
                 <strong>Errores generales de items:</strong> {{ formset.non_form_errors }}
             </div>
         {% endif %}
 
+        {# Errores de items (lista de errores por formulario) #}
         {% if formset.errors %}
             <div class="alert alert-danger">
-                <strong>Errores en los items:</strong>
-                {{ formset.errors }}
+                <strong>Errores en los items:</strong> {{ formset.errors }}
             </div>
         {% endif %}
         
+        <!-- DATOS DEL CLIENTE -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="fas fa-user"></i> Datos del Cliente</h5>
@@ -45,6 +47,7 @@
             </div>
         </div>
         
+        <!-- PRODUCTOS (FORMSET) -->
         <div class="card">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0"><i class="fas fa-list"></i> Productos</h5>
@@ -52,84 +55,57 @@
             <div class="card-body">
                 {{ formset.management_form }}
                 
-                {% if formset.non_form_errors %}
-                    <div class="alert alert-danger">
-                        <strong>Errores generales:</strong> {{ formset.non_form_errors }}
-                    </div>
-                {% endif %}
-                
-                <table class="table table-bordered" id="items-table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Producto *</th>
-                            <th style="width: 120px">Cantidad *</th>
-                            <th style="width: 150px">Precio Unit.</th>
-                            <th style="width: 150px">Subtotal</th>
-                            <th style="width: 80px">Eliminar</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="items-tbody">
-                        {% for item_form in formset %}
-                        <tr class="item-row">
-                            <td>
-                                {{ item_form.producto }}
-                                {% if item_form.producto.errors %}
-                                    <div class="text-danger small">{{ item_form.producto.errors }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ item_form.cantidad }}
-                                {% if item_form.cantidad.errors %}
-                                    <div class="text-danger small">{{ item_form.cantidad.errors }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ item_form.precio_unitario }}
-                                {% if item_form.precio_unitario.errors %}
-                                    <div class="text-danger small">{{ item_form.precio_unitario.errors }}</div>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ item_form.subtotal }}
-                                {% if item_form.subtotal.errors %}
-                                    <div class="text-danger small">{{ item_form.subtotal.errors }}</div>
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                {% if item_form.DELETE %}
-                                    {{ item_form.DELETE }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                    <tbody id="empty-form-row" class="d-none">
-                        <tr class="item-row">
-                            <td>
-                                {{ formset.empty_form.producto }}
-                            </td>
-                            <td>
-                                {{ formset.empty_form.cantidad }}
-                            </td>
-                            <td>
-                                {{ formset.empty_form.precio_unitario }}
-                            </td>
-                            <td>
-                                {{ formset.empty_form.subtotal }}
-                            </td>
-                            <td class="text-center">
-                                {% if formset.empty_form.DELETE %}
-                                    {{ formset.empty_form.DELETE }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </tbody>
+            <table class="table table-bordered" id="items-table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Producto *</th>
+                        <th style="width: 120px">Cantidad *</th>
+                        <th style="width: 150px">Precio Unit.</th>
+                        <th style="width: 150px">Subtotal</th>
+                        <th style="width: 80px">Eliminar</th>
+                    </tr>
+                </thead>
+            
+                {# SOLO UN TBODY REAL - ESTE ES EL DEL FORMSET #}
+                <tbody id="items-tbody">
+                    {% for item_form in formset %}
+                    <tr class="item-row">
+                        <td>{{ item_form.producto }}</td>
+                        <td>{{ item_form.cantidad }}</td>
+                        <td>{{ item_form.precio_unitario }}</td>
+                        <td>{{ item_form.subtotal }}</td>
+                        <td class="text-center">
+                            {% if item_form.DELETE %}
+                                {{ item_form.DELETE }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {# ATENCIÓN: EL EMPTY FORM VA FUERA DE LA TABLA #}
+            <div id="empty-form-row" class="d-none">
+                <table>
+                    <tr class="item-row">
+                        <td>{{ formset.empty_form.producto }}</td>
+                        <td>{{ formset.empty_form.cantidad }}</td>
+                        <td>{{ formset.empty_form.precio_unitario }}</td>
+                        <td>{{ formset.empty_form.subtotal }}</td>
+                        <td class="text-center">
+                            {% if formset.empty_form.DELETE %}
+                                {{ formset.empty_form.DELETE }}
+                            {% endif %}
+                        </td>
+                    </tr>
                 </table>
+            </div>
+
+
                 <div class="mt-3 text-right">
                     <strong>Total de la venta: $ <span id="venta-total">0.00</span></strong>
                 </div>
+
                 <button type="button" class="btn btn-sm btn-info" onclick="addItem()">
                     <i class="fas fa-plus"></i> Agregar producto
                 </button>
@@ -147,79 +123,124 @@
     </form>
 </div>
 
+{# Pasamos productos_precios como JSON seguro para JS #}
+{{ productos_precios|json_script:"productos_precios" }}
+
 <script>
-    // Diccionario id_producto → precio que viene de Django
-    const PRODUCT_PRICES = JSON.parse('{{ productos_precios|default:"{}"|escapejs }}');
+    // Objeto id_producto -> precio unitario, viene del contexto de Django
+    const PRODUCT_PRICES = JSON.parse(
+        document.getElementById("productos_precios").textContent || "{}"
+    );
 
-    // Calcula el total sumando todos los subtotales visibles
-    function updateTotal() {
-        let total = 0;
-        document.querySelectorAll('#items-tbody input[name$="-subtotal"]').forEach(input => {
-            const val = parseFloat(input.value);
-            if (!isNaN(val)) {
-                total += val;
-            }
-        });
-        const totalSpan = document.getElementById('venta-total');
-        if (totalSpan) {
-            totalSpan.textContent = total.toFixed(2);
-        }
-    }
-
-    // Vincula eventos a una fila de items (tanto las iniciales como las nuevas)
-    function attachEventsToRow(row) {
-        const productoSelect = row.querySelector('select[name$="-producto"]');
-        const cantidadInput  = row.querySelector('input[name$="-cantidad"]');
-        const precioInput    = row.querySelector('input[name$="-precio_unitario"]');
-        const subtotalInput  = row.querySelector('input[name$="-subtotal"]');
+    // Recalcula el precio unitario y el subtotal de UNA fila
+    function updateRow(row) {
+        var productoSelect = row.querySelector('select[name$="-producto"]');
+        var cantidadInput  = row.querySelector('input[name$="-cantidad"]');
+        var precioInput    = row.querySelector('input[name$="-precio_unitario"]');
+        var subtotalInput  = row.querySelector('input[name$="-subtotal"]');
 
         if (!productoSelect || !cantidadInput || !precioInput || !subtotalInput) {
             return;
         }
 
-        function updateRow() {
-            const prodId = productoSelect.value;
-            const qty    = parseFloat(cantidadInput.value) || 0;
+        var prodId = productoSelect.value;
+        var qty    = parseFloat(cantidadInput.value);
+        if (isNaN(qty)) {
+            qty = 0;
+        }
 
-            const hasPrice = prodId && Object.prototype.hasOwnProperty.call(PRODUCT_PRICES, prodId);
-            const price    = hasPrice ? PRODUCT_PRICES[prodId] : null;
+        var price = null;
+        if (prodId && Object.prototype.hasOwnProperty.call(PRODUCT_PRICES, prodId)) {
+            price = PRODUCT_PRICES[prodId];
+        }
 
-            // Mostrar precio y subtotal en la fila
-            precioInput.value   = hasPrice ? price.toFixed(2) : "";
-            subtotalInput.value = hasPrice && qty ? (price * qty).toFixed(2) : "";
+        if (price !== null) {
+            // Mostrar precio unitario
+            precioInput.value = Number(price).toFixed(2);
 
-            // Actualizar total general
+            // Si hay cantidad, mostrar subtotal
+            if (qty > 0) {
+                subtotalInput.value = Number(price * qty).toFixed(2);
+            } else {
+                subtotalInput.value = "";
+            }
+        } else {
+            // Sin producto o sin precio
+            precioInput.value = "";
+            subtotalInput.value = "";
+        }
+    }
+
+    // Recalcula el total general de la venta
+    function updateTotal() {
+        var total = 0;
+        var subtotalInputs = document.querySelectorAll('#items-tbody input[name$="-subtotal"]');
+
+        for (var i = 0; i < subtotalInputs.length; i++) {
+            var val = parseFloat(subtotalInputs[i].value);
+            if (!isNaN(val)) {
+                total += val;
+            }
+        }
+
+        var totalSpan = document.getElementById('venta-total');
+        if (totalSpan) {
+            totalSpan.textContent = total.toFixed(2);
+        }
+    }
+
+    // Conecta los eventos de una fila: cambio de producto y de cantidad
+    function attachEventsToRow(row) {
+        var productoSelect = row.querySelector('select[name$="-producto"]');
+        var cantidadInput  = row.querySelector('input[name$="-cantidad"]');
+
+        if (!productoSelect || !cantidadInput) {
+            return;
+        }
+
+        function handler() {
+            updateRow(row);
             updateTotal();
         }
 
-        // Cuando cambie el producto o la cantidad, recalculamos
-        productoSelect.addEventListener("change", updateRow);
-        cantidadInput.addEventListener("input", updateRow);
+        productoSelect.addEventListener("change", handler);
+        cantidadInput.addEventListener("input", handler);
     }
 
-    // Al cargar la página, conectar las filas que ya vienen del formset
-    document.querySelectorAll('#items-tbody tr.item-row').forEach(attachEventsToRow);
-    // Calcular total inicial (será 0.00)
-    updateTotal();
+    // Inicializa todas las filas que ya vienen del formset
+    function initRows() {
+        var rows = document.querySelectorAll('#items-tbody tr.item-row');
+        for (var i = 0; i < rows.length; i++) {
+            attachEventsToRow(rows[i]);
+            updateRow(rows[i]);  // por si viene algo precargado
+        }
+        updateTotal();
+    }
 
-    // Función para agregar una nueva fila de item
+    // Agrega una nueva fila usando el empty_form del formset
     function addItem() {
-        const totalFormsInput = document.querySelector('[name="{{ formset.prefix }}-TOTAL_FORMS"]');
-        let formIndex = parseInt(totalFormsInput.value);
+        var totalFormsInput = document.querySelector('input[name="{{ formset.prefix }}-TOTAL_FORMS"]');
+        var formIndex = parseInt(totalFormsInput.value);
+        if (isNaN(formIndex)) {
+            formIndex = 0;
+        }
 
-        const emptyTemplate = document.querySelector('#empty-form-row').innerHTML;
-        const newRowHtml    = emptyTemplate.replace(/__prefix__/g, formIndex);
+        var emptyTemplate = document.querySelector('#empty-form-row').innerHTML;
+        var newRowHtml = emptyTemplate.replace(/__prefix__/g, formIndex);
 
-        const tbody = document.querySelector('#items-tbody');
+        var tbody = document.querySelector('#items-tbody');
         tbody.insertAdjacentHTML('beforeend', newRowHtml);
 
         totalFormsInput.value = formIndex + 1;
 
-        const newRow = tbody.querySelector('tr.item-row:last-child');
+        var newRow = tbody.querySelector('tr.item-row:last-child');
         attachEventsToRow(newRow);
+        updateRow(newRow);
         updateTotal();
     }
-</script>
 
+    // Cuando cargue el DOM, inicializamos las filas
+    document.addEventListener("DOMContentLoaded", initRows);
+</script>
 
 {% endblock %}

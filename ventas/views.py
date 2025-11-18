@@ -11,6 +11,8 @@ from productos.models import Producto
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.db import transaction
+from django.http import HttpResponse
+import traceback
 
 class VentaListView(ListView):
     model = Venta
@@ -49,7 +51,16 @@ class VentaCreateView(CreateView):
         formset = context["formset"]
 
         if not formset.is_valid():
-            messages.error(self.request, "Hay errores en los items.")
+            messages.error(self.request, f"Hay errores en los items: {formset.errors}")
+            return self.form_invalid(form)
+        
+        items_con_datos = [
+            f for f in formset.forms 
+            if f.cleaned_data and f.cleaned_data.get('producto') and not f.cleaned_data.get('DELETE', False)
+        ]
+
+        if len(items_con_datos) == 0:
+            messages.error(self.request, 'Debe agregar al menos un producto.')
             return self.form_invalid(form)
 
         try:
@@ -58,7 +69,7 @@ class VentaCreateView(CreateView):
 
                 total = 0
 
-                for item_form in formset:
+                for item_form in items_con_datos:
                     data = item_form.cleaned_data
                 
                     if not data or not data.get("producto"):
@@ -69,7 +80,7 @@ class VentaCreateView(CreateView):
                     precio = producto.precio
                 
                     if cantidad > producto.stock:
-                        raise ValueError(...)
+                        raise ValueError("No hay suficiente stock")
                 
                     item = item_form.save(commit=False)
                     item.venta = self.object

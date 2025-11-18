@@ -12,4 +12,6 @@ urlpatterns = [
     path('<int:pk>/movimiento/', views.MovimientoStockCreateView.as_view(), name='movimiento_create'),
     path('<int:pk>/ajustar-stock/', views.AjusteStockView.as_view(), name='ajustar_stock'),
     path('stock-bajo/', views.StockBajoListView.as_view(), name='stock_bajo_list'),
+    path('<int:pk>/detalle-movimientos/', views.MovimientoStockListView.as_view(), name="movimiento_list"),
 ]
+

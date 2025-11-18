@@ -14,24 +14,67 @@ from django.db import transaction
 from django.http import HttpResponse
 import traceback
 
-class VentaListView(ListView):
+class VentaListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Venta
     template_name = "ventas/venta_list.html"
     context_object_name = "ventas"
-    #paginate_by = 
+    paginate_by = 5
+    login_url = 'account_login'
+
+    permission_required = "ventas.view_venta"
+
+    def has_permission(self):
+        user = self.request.user
+
+        if not super().has_permission():
+            return False
+
+        if user.is_superuser:
+            return True
+        
+        return (super().has_permission() and self.request.user.groups.filter(name='ventas').exists())
 
 
-class VentaDetailView(DetailView):
+class VentaDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Venta
     template_name = "ventas/venta_detail.html"
     context_object_name = "venta"
+    login_url = 'account_login'
+
+    permission_required = "ventas.view_venta"
+
+    def has_permission(self):
+        user = self.request.user
+
+        if not super().has_permission():
+            return False
+
+        if user.is_superuser:
+            return True
+        
+        return (super().has_permission() and self.request.user.groups.filter(name='ventas').exists())
 
 
-class VentaCreateView(CreateView):
+class VentaCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Venta
     form_class = VentaForm
     template_name = "ventas/venta_form.html"
     success_url = reverse_lazy("ventas:venta_list")
+    login_url = 'account_login'
+
+    permission_required = "ventas.add_venta"
+
+    def has_permission(self):
+        user = self.request.user
+
+        if not super().has_permission():
+            return False
+
+        if user.is_superuser:
+            return True
+        
+        return (super().has_permission() and self.request.user.groups.filter(name='ventas').exists())
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,7 +148,7 @@ class VentaCreateView(CreateView):
             return self.form_invalid(form)
 
 """
-class VentaUpdateView(UpdateView):
+class VentaUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Venta
     template_name = "ventas/venta_form.html"
     success_url = reverse_lazy("ventas:venta_list")
@@ -115,7 +158,7 @@ class VentaUpdateView(UpdateView):
         messages.success(self.request, "Venta actualizada exitosamente")
         return respone
 
-class VentaDeleteView(DeleteView):
+class VentaDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Venta
     template_name = "ventas/venta_delete.html"
     context_object_name = "venta"

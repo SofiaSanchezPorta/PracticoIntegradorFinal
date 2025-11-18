@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'bootstrap4',
     'crispy_forms',
     'crispy_bootstrap4',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
     'productos',
     'clientes',
     'core',
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'inventario.urls'
@@ -132,7 +136,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Login redirect URL
+LOGIN_REDIRECT_URL = 'home'
+
+# Logout redirect URL
+LOGOUT_REDIRECT_URL = 'account_login'
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap4'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 BOOTSTRAP4 = {
@@ -142,3 +153,7 @@ BOOTSTRAP4 = {
     'error_css_class' : 'is-invalid',
     'success_css_class' : 'is-valid',
 }
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_VERIFICATION = 'none'

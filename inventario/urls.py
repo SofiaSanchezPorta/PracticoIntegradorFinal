@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from core.views import HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include("productos.urls")),
+    path("", HomeView.as_view(), name='home'),
+    path('productos', include('productos.urls')),
     path('clientes/', include('clientes.urls')),
     path('ventas/', include('ventas.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:

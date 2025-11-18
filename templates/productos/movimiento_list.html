@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Movimientos de stock: {{ producto.nombre }}</h2>
+
+  {% if movimientos %}
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Cantidad</th>
+          <th>Motivo</th>
+          <th>Usuario</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for movimiento in movimientos %}
+          <tr>
+            <td>{{ movimiento.fecha }}</td>
+            <td>{{ movimiento.tipo }}</td>
+            <td>{{ movimiento.cantidad }}</td>
+            <td>{{ movimiento.motivo }}</td>
+            <td>{{ movimiento.usuario }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="pt-2">
+      {% include 'paginator.html' %}
+    </div>
+  {% else %}
+    <p>No hay movimientos registrados para este producto.</p>
+  {% endif %}
+
+  <a href="{% url 'productos:producto_detail' producto.pk %}" class="btn btn-secondary btn-sm">
+    Volver al producto
+  </a>
+{% endblock %}

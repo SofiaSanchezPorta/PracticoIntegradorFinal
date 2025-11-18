@@ -38,6 +38,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="pt-2">
+          {% include 'paginator.html' %}
+        </div>
     {% else %}
         <div class="alert alert-info">No hay ventas aún. ¡Crea el primero!</div>
     {% endif %}

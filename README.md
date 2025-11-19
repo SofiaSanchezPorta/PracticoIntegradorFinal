@@ -13,7 +13,9 @@ Permite gestionar:
 Los datos iniciales (usuarios, grupos, productos, clientes y algunas ventas de ejemplo) se cargan automáticamente desde `backup.json` al levantar el proyecto con Docker.
 
 usuario root → contraseña: Practica1Final
+
 usuario stocker → contraseña: inventario25
+
 usuario vendedor → contraseña: ventas25
 
 ## 🚀 Funcionalidades

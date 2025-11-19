@@ -1,10 +1,567 @@
 [
 {
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$gWosyxttyAmqrFxfKWjkrS$vAj6j0jCZxiBiL2e9DQyfjE2eMl9roiKpX/GQ5Y60bs=",
+    "last_login": "2025-11-19T02:04:20.565Z",
+    "is_superuser": true,
+    "username": "root",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-11-19T01:42:29.308Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$fTAlew5W5woY4elyzZo6s2$iKp/MJzxWcQzyKJxYhfb2rA84dxO/jnlyeTo7vNjiQc=",
+    "last_login": "2025-11-19T02:05:15.694Z",
+    "is_superuser": false,
+    "username": "stocker",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-19T01:56:23Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$4UvlltKuNL8QYSGHefBf0O$We6wtiNbZKujLhL57GEYLcNx1H5+IfnpCaY/Z70C8eM=",
+    "last_login": "2025-11-19T02:06:38.719Z",
+    "is_superuser": false,
+    "username": "vendedor",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-11-19T01:57:01Z",
+    "groups": [
+      3
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "administradores",
+    "permissions": [
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      1,
+      2,
+      3,
+      4,
+      9,
+      10,
+      11,
+      12,
+      5,
+      6,
+      7,
+      8,
+      13,
+      14,
+      15,
+      16,
+      45,
+      46,
+      47,
+      48,
+      17,
+      18,
+      19,
+      20,
+      41,
+      42,
+      43,
+      44,
+      37,
+      38,
+      39,
+      40,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      53,
+      54,
+      55,
+      56,
+      49,
+      50,
+      51,
+      52
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "stock",
+    "permissions": [
+      41,
+      42,
+      43,
+      44,
+      37,
+      38,
+      39,
+      40
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 3,
+  "fields": {
+    "name": "ventas",
+    "permissions": [
+      45,
+      46,
+      47,
+      48,
+      53,
+      54,
+      55,
+      56,
+      49,
+      50,
+      51,
+      52
+    ]
+  }
+},
+{
   "model": "sites.site",
   "pk": 1,
   "fields": {
     "domain": "example.com",
     "name": "example.com"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 1,
+  "fields": {
+    "sku": null,
+    "nombre": "Coca Cola 500 ml",
+    "descripcion": "Coca Cola 500 ml",
+    "precio": "1800.00",
+    "stock": 17,
+    "stock_minimo": 5,
+    "imagen": "productos/23483ae8-4778-4fb8-8b4c-26de4b6bbbca.jpg",
+    "fecha_creacion": "2025-11-19T01:43:30.410Z",
+    "fecha_actualizacion": "2025-11-19T01:54:00.323Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 2,
+  "fields": {
+    "sku": null,
+    "nombre": "Pebete de salame",
+    "descripcion": "Pebete de salame",
+    "precio": "1700.00",
+    "stock": 16,
+    "stock_minimo": 6,
+    "imagen": "",
+    "fecha_creacion": "2025-11-19T01:43:56.674Z",
+    "fecha_actualizacion": "2025-11-19T01:51:42.224Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 3,
+  "fields": {
+    "sku": null,
+    "nombre": "Papas Lays 85 g",
+    "descripcion": "Papas Lays 85 g",
+    "precio": "3000.00",
+    "stock": 2,
+    "stock_minimo": 5,
+    "imagen": "productos/3c61fcba-8242-433b-aa52-e88841c19a11.jpg",
+    "fecha_creacion": "2025-11-19T01:44:19.591Z",
+    "fecha_actualizacion": "2025-11-19T01:52:05.068Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 4,
+  "fields": {
+    "sku": null,
+    "nombre": "Oreo",
+    "descripcion": "Oreo x 118 g",
+    "precio": "2200.00",
+    "stock": 7,
+    "stock_minimo": 3,
+    "imagen": "productos/da20e647-b392-4973-85c5-1dbf9334b84b.jpg",
+    "fecha_creacion": "2025-11-19T01:46:40.292Z",
+    "fecha_actualizacion": "2025-11-19T01:52:05.060Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 5,
+  "fields": {
+    "sku": null,
+    "nombre": "Oreo sin TACC",
+    "descripcion": "Oreo sin TACC",
+    "precio": "3000.00",
+    "stock": 1,
+    "stock_minimo": 3,
+    "imagen": "productos/7bd99fd3-7141-4ec0-b3a8-2e78f40f4e22.jpg",
+    "fecha_creacion": "2025-11-19T01:47:13.889Z",
+    "fecha_actualizacion": "2025-11-19T01:47:13.889Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 6,
+  "fields": {
+    "sku": null,
+    "nombre": "Oblea bon o bon blanca",
+    "descripcion": "Oblea bon o bon blanca simple",
+    "precio": "1000.00",
+    "stock": 12,
+    "stock_minimo": 5,
+    "imagen": "productos/b907095e-4149-4d13-b1ce-f61aa89c1c62.jpg",
+    "fecha_creacion": "2025-11-19T01:48:03.966Z",
+    "fecha_actualizacion": "2025-11-19T01:48:03.966Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 7,
+  "fields": {
+    "sku": null,
+    "nombre": "Oblea bon o bon XL",
+    "descripcion": "Oblea bon o bon XL negra",
+    "precio": "1500.00",
+    "stock": 5,
+    "stock_minimo": 5,
+    "imagen": "productos/980f8d7c-aa5c-4426-979d-ac34da26bfc2.jpg",
+    "fecha_creacion": "2025-11-19T01:48:27.834Z",
+    "fecha_actualizacion": "2025-11-19T01:48:27.834Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 8,
+  "fields": {
+    "sku": null,
+    "nombre": "Miga jamón",
+    "descripcion": "Miga jamón",
+    "precio": "1700.00",
+    "stock": 10,
+    "stock_minimo": 6,
+    "imagen": "",
+    "fecha_creacion": "2025-11-19T01:52:41.282Z",
+    "fecha_actualizacion": "2025-11-19T02:07:54.932Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 9,
+  "fields": {
+    "sku": null,
+    "nombre": "Raffaello",
+    "descripcion": "Raffaello",
+    "precio": "3300.00",
+    "stock": 0,
+    "stock_minimo": 2,
+    "imagen": "productos/405a18c9-87e6-4702-a27c-48e290233b34.jpg",
+    "fecha_creacion": "2025-11-19T02:05:59.512Z",
+    "fecha_actualizacion": "2025-11-19T02:07:54.922Z"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 1,
+  "fields": {
+    "producto": 1,
+    "tipo": "entrada",
+    "cantidad": 10,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:43:30.415Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 2,
+  "fields": {
+    "producto": 2,
+    "tipo": "entrada",
+    "cantidad": 18,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:43:56.677Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 3,
+  "fields": {
+    "producto": 3,
+    "tipo": "entrada",
+    "cantidad": 3,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:44:19.601Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 4,
+  "fields": {
+    "producto": 4,
+    "tipo": "entrada",
+    "cantidad": 8,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:46:40.314Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 5,
+  "fields": {
+    "producto": 5,
+    "tipo": "entrada",
+    "cantidad": 1,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:47:13.902Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 6,
+  "fields": {
+    "producto": 6,
+    "tipo": "entrada",
+    "cantidad": 12,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:48:03.976Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 7,
+  "fields": {
+    "producto": 7,
+    "tipo": "entrada",
+    "cantidad": 5,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:48:27.839Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 8,
+  "fields": {
+    "producto": 8,
+    "tipo": "entrada",
+    "cantidad": 12,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T01:52:41.284Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 9,
+  "fields": {
+    "producto": 1,
+    "tipo": "entrada",
+    "cantidad": 12,
+    "motivo": "Pedido",
+    "fecha": "2025-11-19T01:53:45.170Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 10,
+  "fields": {
+    "producto": 1,
+    "tipo": "salida",
+    "cantidad": 3,
+    "motivo": "Cambios",
+    "fecha": "2025-11-19T01:54:00.322Z",
+    "usuario": "root"
+  }
+},
+{
+  "model": "productos.movimientostock",
+  "pk": 11,
+  "fields": {
+    "producto": 9,
+    "tipo": "entrada",
+    "cantidad": 1,
+    "motivo": "Stock inicial",
+    "fecha": "2025-11-19T02:05:59.539Z",
+    "usuario": "stocker"
+  }
+},
+{
+  "model": "clientes.cliente",
+  "pk": 1,
+  "fields": {
+    "nombre": "Esteban",
+    "apellido": "Quito",
+    "dni": 12345678,
+    "telefono": 153124550,
+    "mail": "estebanquito@gmail.com"
+  }
+},
+{
+  "model": "clientes.cliente",
+  "pk": 2,
+  "fields": {
+    "nombre": "Elvis",
+    "apellido": "Cocho",
+    "dni": 21345987,
+    "telefono": 152987456,
+    "mail": "elvis.cocho@gmail.com"
+  }
+},
+{
+  "model": "clientes.cliente",
+  "pk": 3,
+  "fields": {
+    "nombre": "Divina",
+    "apellido": "Correa de Vaca",
+    "dni": 36741852,
+    "telefono": 152369741,
+    "mail": "Divina.CV@gmail.com"
+  }
+},
+{
+  "model": "ventas.venta",
+  "pk": 1,
+  "fields": {
+    "codigo_venta": "",
+    "cliente": 2,
+    "fecha": "2025-11-19T01:51:42.211Z",
+    "total": "7000.00"
+  }
+},
+{
+  "model": "ventas.venta",
+  "pk": 2,
+  "fields": {
+    "codigo_venta": "",
+    "cliente": 1,
+    "fecha": "2025-11-19T01:52:05.057Z",
+    "total": "5200.00"
+  }
+},
+{
+  "model": "ventas.venta",
+  "pk": 3,
+  "fields": {
+    "codigo_venta": "",
+    "cliente": 3,
+    "fecha": "2025-11-19T02:07:54.917Z",
+    "total": "6700.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 1,
+  "fields": {
+    "venta": 1,
+    "producto": 1,
+    "cantidad": 2,
+    "precio_unitario": "1800.00",
+    "subtotal": "3600.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 2,
+  "fields": {
+    "venta": 1,
+    "producto": 2,
+    "cantidad": 2,
+    "precio_unitario": "1700.00",
+    "subtotal": "3400.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 3,
+  "fields": {
+    "venta": 2,
+    "producto": 4,
+    "cantidad": 1,
+    "precio_unitario": "2200.00",
+    "subtotal": "2200.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 4,
+  "fields": {
+    "venta": 2,
+    "producto": 3,
+    "cantidad": 1,
+    "precio_unitario": "3000.00",
+    "subtotal": "3000.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 5,
+  "fields": {
+    "venta": 3,
+    "producto": 9,
+    "cantidad": 1,
+    "precio_unitario": "3300.00",
+    "subtotal": "3300.00"
+  }
+},
+{
+  "model": "ventas.itemventa",
+  "pk": 6,
+  "fields": {
+    "venta": 3,
+    "producto": 8,
+    "cantidad": 2,
+    "precio_unitario": "1700.00",
+    "subtotal": "3400.00"
   }
 }
 ]
